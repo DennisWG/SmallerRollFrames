@@ -1,0 +1,7 @@
+## Interface: 11200
+## Author: DWG
+## Title: SmallerRollframes
+## Notes: Reduces the size of your roll frames
+## Title-deDE: SmallerRollframes
+## Notes-deDE: Reduziert die Größe der Würfelfenster
+SmallerRollframes.xml

@@ -1,0 +1,282 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="SmallerRollframes.lua"/>
+
+	<FontString name="TinyFont" inherits="MasterFont" font="Fonts\FRIZQT__.TTF" virtual="true">
+		<FontHeight>
+			<AbsValue val="8"/>
+		</FontHeight>
+		<Color r="1.0" g="0.2" b="0"/>
+	</FontString>
+	
+	<Frame name="SmallGroupLootFrameTemplate" toplevel="true" frameStrata="DIALOG" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="243" y="25"/>
+		</Size>
+		<Frames>
+			<Button name="$parentIconFrame" enableMouse="true">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="3" y="-3"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture name="$parentIcon">
+							<Size>
+								<AbsDimension x="20" y="20"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentSlotTexture" file="Interface\AddOns\SmallerRollframes\border_smooth">
+							<Size>
+								<AbsDimension x="22" y="22"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="0" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<FontString name="$parentBoP" inherits="TinyFont" text="BoP" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="34" y="20"/>
+							</Size>
+							<Anchors>
+								<Anchor point="BOTTOMLEFT">
+									<Offset>
+										<AbsDimension x="3" y="-8"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						this.hasItem = 1;
+					</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetLootRollItem(this:GetParent().rollID);
+						CursorUpdate();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+						ResetCursor();
+					</OnLeave>
+					<OnUpdate>
+						CursorOnUpdate();
+					</OnUpdate>
+					<OnClick>
+						if ( IsControlKeyDown() ) then
+							DressUpItemLink(GetLootRollItemLink(this:GetParent().rollID));
+						elseif ( IsShiftKeyDown() ) then
+							if ( ChatFrameEditBox:IsVisible() ) then
+								ChatFrameEditBox:Insert(GetLootRollItemLink(this:GetParent().rollID));
+							end
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+			<StatusBar name="$parentTimer" drawLayer="BACKGROUND" minValue="0" maxValue="60000" defaultValue="0">
+				<Size>
+					<AbsDimension x="200" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentIconFrame" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BORDER">
+						<Texture file="Interface\PaperDollInfoFrame\UI-Character-Skills-BarBorder" name="$parentBackground">
+							<Size>
+								<AbsDimension x="206" y="36"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset>
+										<AbsDimension x="0" y="10"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<FontString name="$parentName" inherits="GameFontNormalSmall" text="Item Name" justifyH="LEFT">
+							<Size>
+								<AbsDimension x="200" y="30"/>
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT">
+									<Offset>
+										<AbsDimension x="60" y="1"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnUpdate>
+						SmallGroupLootFrame_OnUpdate();
+					</OnUpdate>
+				</Scripts>
+				<BarTexture name="$parentBar" file="Interface\AddOns\SmallerRollframes\bar" />
+				<BarColor r="1.0" g="1.0" b="0" />
+			</StatusBar>
+			<Button name="$parentRollButton">
+				<Size>
+					<AbsDimension x="16" y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTimer" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="32" y="-1"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						RollOnLoot(this:GetParent().rollID, 1);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(NEED);
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up"/>
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
+			</Button>
+			<Button name="$parentGreedButton">
+				<Size>
+					<AbsDimension x="16" y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentRollButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="-1"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						RollOnLoot(this:GetParent().rollID, 2);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(GREED);
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Coin-Up"/>
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Coin-Highlight" alphaMode="ADD"/>
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Coin-Down"/>
+			</Button>
+			<Button name="$parentPassButton" inherits="UIPanelCloseButton">
+				<Size>
+					<AbsDimension x="16" y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentGreedButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="0" y="2"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						RollOnLoot(this:GetParent().rollID, 0);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
+						GameTooltip:SetText(PASS);
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up"/>
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD"/>
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down"/>
+			</Button>
+
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				this:RegisterEvent("CANCEL_LOOT_ROLL");
+				this:RegisterEvent("CONFIRM_LOOT_ROLL");
+			</OnLoad>
+			<OnShow>
+				SmallGroupLootFrame_OnShow();
+			</OnShow>
+			<OnEvent>
+				SmallGroupLootFrame_OnEvent();
+			</OnEvent>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="SmallGroupLootFrame1" inherits="SmallGroupLootFrameTemplate" id="1" enableMouse="true">
+		<Anchors>
+			<Anchor point="BOTTOM">
+				<Offset>
+					<AbsDimension x="0" y="260"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnDragStart>
+				StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				StopMovingOrSizing();
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+	<Frame name="SmallGroupLootFrame2" inherits="SmallGroupLootFrameTemplate" id="2">
+		<Anchors>
+			<Anchor point="BOTTOM" relativeTo="SmallGroupLootFrame1" relativePoint="TOP">
+				<Offset>
+					<AbsDimension x="0" y="4"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</Frame>
+	<Frame name="SmallGroupLootFrame3" inherits="SmallGroupLootFrameTemplate" id="3">
+		<Anchors>
+			<Anchor point="BOTTOM" relativeTo="SmallGroupLootFrame2" relativePoint="TOP">
+				<Offset>
+					<AbsDimension x="0" y="4"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</Frame>
+	<Frame name="SmallGroupLootFrame4" inherits="SmallGroupLootFrameTemplate" id="4">
+		<Anchors>
+			<Anchor point="BOTTOM" relativeTo="SmallGroupLootFrame3" relativePoint="TOP">
+				<Offset>
+					<AbsDimension x="0" y="4"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</Frame>
+	
+</Ui>
