@@ -1,3 +1,10 @@
+--[[
+	Author: Dennis Werner Garske (DWG)
+	License: MIT License
+
+	Last Modified:
+        06.09.2014 (DWG): Initial release
+]]
 
 function GroupLootFrame_OpenNewFrame(id, rollTime)
 	local frame;
