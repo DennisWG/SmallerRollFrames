@@ -1,27 +1,37 @@
 --[[
 	Author: Dennis Werner Garske (DWG)
 	License: MIT License
-
-	Last Modified:
-        06.09.2014 (DWG): Initial release
 ]]
 
 function GroupLootFrame_OpenNewFrame(id, rollTime)
 	local frame;
 	for i=1, NUM_GROUP_LOOT_FRAMES do
 		frame = getglobal("SmallGroupLootFrame"..i);
+        
 		if ( not frame:IsVisible() ) then
 			frame.rollID = id;
 			frame.rollTime = rollTime;
 			getglobal("GroupLootFrame"..i.."Timer"):SetMinMaxValues(0, rollTime);
 			frame:Show();
-			return;
+            if not SmallGroupLootFrame1.moving then
+                return;
+            end
 		end
 	end
 end
 
 function SmallGroupLootFrame_OnShow()
-	local texture, name, count, quality, bindOnPickUp = GetLootRollItemInfo(this.rollID);
+    local texture, name, count, quality, bindOnPickUp;
+    
+    if SmallGroupLootFrame1.moving then
+        texture = "Interface\\Icons\\Spell_Shadow_UnholyFrenzy";
+        name = "Moving Frames";
+        count = 1;
+        quality = 5;
+        bindOnPickUp = 1; 
+    else
+        texture, name, count, quality, bindOnPickUp = GetLootRollItemInfo(this.rollID);
+    end
 	
 	getglobal("SmallGroupLootFrame"..this:GetID().."IconFrameIcon"):SetTexture(texture);
 	if string.len(name) > 27 then
@@ -65,3 +75,23 @@ function SmallGroupLootFrame_OnUpdate()
 		this:SetValue(left);
 	end
 end
+
+SLASH_SMALLERROLLFRAMES1 = "/smallerrollframes";
+SLASH_SMALLERROLLFRAMES2 = "/smrf";
+SlashCmdList["SMALLERROLLFRAMES"] = function(msg)
+    if msg == "toggle move" then
+        SmallGroupLootFrame1.moving = not SmallGroupLootFrame1.moving;
+        if SmallGroupLootFrame1.moving then
+            GroupLootFrame_OpenNewFrame(0, 0);
+        else
+            for i=1, NUM_GROUP_LOOT_FRAMES do
+                getglobal("SmallGroupLootFrame"..i):Hide();
+            end
+        end
+    end
+end
+
+
+
+
+
